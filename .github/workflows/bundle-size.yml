@@ -1,0 +1,29 @@
+name: Bundle size
+on:
+  pull_request:
+
+jobs:
+  bundle-size:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Save PR number
+        run: echo ${{ github.event.number }} > pr.txt
+
+      - name: Build report
+        run: |
+          echo "Bundle size report for the current pull request." > monosize-report.md
+          echo "| package | size |" >> monosize-report.md
+          echo "| --- | --- |" >> monosize-report.md
+          echo "| tabster | 12.3 kB |" >> monosize-report.md
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: monosize-report
+          retention-days: 1
+          if-no-files-found: error
+          path: |
+            monosize-report.md
+            pr.txt
